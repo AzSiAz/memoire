@@ -1,0 +1,120 @@
+{% extends "memory/base.html" %}
+
+{% block title %}Add Memory{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Add Memory Form -->
+    <div class="bg-white shadow rounded-lg mb-8">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Memory</h3>
+            <form id="addMemoryForm" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" id="username" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                    <textarea name="content" id="content" rows="3" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="channel_id" class="block text-sm font-medium text-gray-700">Channel ID</label>
+                        <input type="text" name="channel_id" id="channel_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="server_id" class="block text-sm font-medium text-gray-700">Server ID</label>
+                        <input type="text" name="server_id" id="server_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label for="metadata" class="block text-sm font-medium text-gray-700">Metadata (JSON)</label>
+                    <textarea name="metadata" id="metadata" rows="2"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{"tags": []}</textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Add Memory
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Add Memory Form Handler
+    document.getElementById('addMemoryForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = {
+            username: formData.get('username'),
+            content: formData.get('content'),
+            channel_id: formData.get('channel_id') || null,
+            server_id: formData.get('server_id') || null,
+            metadata: JSON.parse(formData.get('metadata') || '{}')
+        };
+
+        try {
+            const response = await fetch('/memory/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Memory added successfully!');
+                this.reset();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+
+    function displayResults(memories) {
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = memories.map(memory => `
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-900">${memory.content}</p>
+                        <p class="text-xs text-gray-500 mt-1">Created: ${new Date(memory.created_at).toLocaleString()}</p>
+                    </div>
+                    <a href="/memory/${memory.id}/" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        `).join('');
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,42 @@
+{% extends "memory/base.html" %}
+
+{% block title %}Memories{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <!-- Header Section -->
+    <div class="px-4 py-5 sm:px-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Memories</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">A list of all memories for the selected user.</p>
+            </div>
+            <a href="{% url 'memory_add' %}"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Add New Memory
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Form Section -->
+    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <form method="get" class="space-y-4">
+            {% include "memory/components/search_form.html" %}
+        </form>
+    </div>
+
+    <!-- Results List Section -->
+    <div class="border-t border-gray-200">
+        <ul class="divide-y divide-gray-200">
+            {% include "memory/components/memory_list_items.html" %}
+        </ul>
+    </div>
+
+    <!-- Pagination Section -->
+    {% if page_obj.has_other_pages %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        {% include "memory/components/pagination.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
