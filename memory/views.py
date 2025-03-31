@@ -126,13 +126,12 @@ def search_memories(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'error': str(e)}, status=400)
 
 @require_http_methods(["POST", "GET"])
-def profile_view(request: HttpRequest) -> HttpResponse:
+def profile_view(request: HttpRequest, username: str) -> HttpResponse:
     """View and edit user profile."""
-    username = request.GET.get('username')
     if not username:
         return JsonResponse({'error': 'username is required'}, status=400)
         
-    profile, created = UserProfile.objects.get_or_create(username=username)
+    profile = get_object_or_404(UserProfile, username=username)
     if request.method == 'POST':
         profile.custom_info.update(request.POST.get('custom_info', {}))
         profile.save()

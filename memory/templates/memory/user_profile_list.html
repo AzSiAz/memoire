@@ -9,7 +9,7 @@
         <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-semibold">
-                    <a href="{% url 'profile' %}?username={{ profile.username }}" 
+                    <a href="{% url 'profile' username=profile.username %}" 
                        class="text-blue-600 hover:text-blue-800">
                         {{ profile.username }}
                     </a>
