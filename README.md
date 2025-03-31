@@ -2,5 +2,5 @@
 
 ## TODO
 
-- [] Need to check if memory contredict themselves
-- [] Compact very old memory and a summary
+- [ ] Need to check if memory contredict themselves
+- [ ] Compact very old memory and a summary
