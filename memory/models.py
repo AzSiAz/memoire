@@ -25,6 +25,7 @@ class Memory(models.Model):
     embeddings = VectorField(dimensions=DIMS)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    summary = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='summarized_memories')
     
     class Meta:
         indexes = [
@@ -36,6 +37,7 @@ class Memory(models.Model):
                 ef_construction=64,
             ),
             models.Index(fields=['user', 'channel_id', 'server_id']),
+            models.Index(fields=['summary_id'])
         ]
         
     def __str__(self):

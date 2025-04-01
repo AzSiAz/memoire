@@ -29,6 +29,11 @@ def memory_list(request: HttpRequest) -> HttpResponse:
         user = get_object_or_404(UserProfile, username=username)
         memories = memories.filter(user=user)
 
+    # Show summaries and hide summarized memories
+    memories = memories.filter(
+        Q(summary_id__isnull=True) | Q(metadata__has_key='type', metadata__type='summary')
+    )
+
     if query and query != 'None':
         from .embeddings import compute_embedding
         query_embedding = compute_embedding(query)[0]
@@ -103,6 +108,11 @@ def search_memories(request: HttpRequest) -> JsonResponse:
         if username:
             user = get_object_or_404(UserProfile, username=username)
             memories = memories.filter(user=user)
+
+        # Show summaries and hide summarized memories
+        memories = memories.filter(
+            Q(summary_id__isnull=True) | Q(metadata__has_key='type', metadata__type='summary')
+        )
 
         if query:
             # Compute query embedding
