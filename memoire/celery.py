@@ -21,6 +21,6 @@ app.conf.result_backend = 'redis://localhost:6379/0'
 app.conf.beat_schedule = {
     'summarize-memories': {
         'task': 'memory.tasks.summarize_memories',
-        'schedule': 60.0,  # Run daily (24 hours in seconds)
+        'schedule': 86400.0,  # Run daily (24 hours in seconds)
     },
 } 

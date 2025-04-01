@@ -94,7 +94,7 @@ def summarize_memories():
     This task should run daily.
     """
     print("Starting summarize_memories task")
-    chunk_size = 2  # Maximum number of memories per chunk
+    chunk_size = 10  # Maximum number of memories per chunk
 
     # Get users with more than 10 memories
     users_with_many_memories = Memory.objects.values('user').annotate(memory_count=Count('id')).filter(memory_count__gt=chunk_size, summary_id__isnull=True)

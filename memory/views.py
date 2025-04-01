@@ -44,8 +44,6 @@ def memory_list(request: HttpRequest) -> HttpResponse:
     paginator = Paginator(memories, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    print(page_obj.object_list)
     
     return render(request, 'memory/memory_list.html', {
         'page_obj': page_obj,
